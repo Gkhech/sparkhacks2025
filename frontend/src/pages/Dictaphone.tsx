@@ -7,7 +7,6 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import type { MyRequest, MyResponse } from "../../../../types/types";
 import styles from '../styles/Dictaphone.module.css';
 
-// Define interfaces for the component's props and recognition results
 interface SpeechRecognitionResult {
   transcript: string;
   listening: boolean;
@@ -25,21 +24,44 @@ const Dictaphone: React.FC = () => {
   const [isClient, setIsClient] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [context, setContext] = useState<string[] | null>(null);
+  const [seconds, setSeconds] = useState<number>(60); // Start from 60 seconds
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   useEffect(() => {
-    // Set isClient to true when the component mounts on the client
+    let intervalId: NodeJS.Timeout;
+
+    if (isActive && seconds > 0) {
+      intervalId = setInterval(() => {
+        setSeconds((prevSeconds) => {
+          const newSeconds = prevSeconds - 1;
+          if (newSeconds === 0) {
+            // When timer hits 0, stop everything
+            setIsActive(false);
+            handleStop();
+          }
+          return newSeconds;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isActive, seconds]);
+
+  useEffect(() => {
     setIsClient(true);
   }, []);
 
   useEffect(() => {
-    // Cleanup function to revoke the previous audio URL when it changes
     return () => {
       if (audioUrl) {
-        console.log("in here")
-        URL.revokeObjectURL(audioUrl); // Revoke previous audio URL when it changes or component unmounts
+        URL.revokeObjectURL(audioUrl);
       }
     };
-  }, [audioUrl]); // Effect runs when audioUrl changes
+  }, [audioUrl]);
 
   const {
     transcript,
@@ -58,75 +80,31 @@ const Dictaphone: React.FC = () => {
     language: 'en-US'
   };
 
-  // Fix the onClick handlers to use proper function calls
   const handleStart = () => {
+    setSeconds(15); // Reset timer to 60 seconds
+    setIsActive(true);
     SpeechRecognition.startListening(options);
   };
 
-
-  const handleStop = async () => {
+  const handleStop = () => {
     try {
-      console.log("executing handleStop"); // Add this to check if function is called
-      options.continuous = false;
-
-      /*
-      const current_id = context ? context.length : 0
-
-      const myRequest: MyRequest = {
-        id: current_id + 1,
-        text: transcript,
-        context: context || []
-      };
-
-      let response = await fetch('http://localhost:8080/speech', {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json' // Add this header
-        },
-        body: JSON.stringify(myRequest) // Convert to JSON
-      });
-      console.log("outside COntext", context)
-
-      if (transcript) {
-        setContext([...context || "", transcript]); // Append new item
-        console.log("Context", context)
-      }
-
-      // Get the audio blob directly
-      const audioBlob = await response.blob();
-      const url = URL.createObjectURL(audioBlob);
-
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-      }
-
-      setAudioUrl(url);
-
       SpeechRecognition.stopListening();
-    } 
-    */
-    }
-    catch (error) {
+      setIsActive(false);
+      setSeconds(60); // Reset timer back to 60
+    } catch (error) {
       console.error("Error in handleStop:", error);
     }
   };
 
-  console.log(options.continuous);
-
   return (
     <div className={styles.dictaphone}>
+      <h1>Timer: {seconds}s</h1>
       <img className={styles.fish} src={fish} />
       <p className={styles.mic}>Microphone: {listening ? 'on' : 'off'}</p>
       <button onClick={handleStart}>Start</button>
       <button onClick={handleStop}>Stop</button>
       <button onClick={resetTranscript}>Reset</button>
       <p>{transcript}</p>
-      {/* {audioUrl && (
-        <audio controls>
-          <source src={audioUrl} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      )} */}
       {audioUrl && <audio key={audioUrl} src={audioUrl} controls />}
       <p>{audioUrl}</p>
     </div>
@@ -134,4 +112,3 @@ const Dictaphone: React.FC = () => {
 };
 
 export default Dictaphone;
-
