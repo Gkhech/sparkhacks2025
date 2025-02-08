@@ -135,12 +135,6 @@ const Dictaphone: React.FC = () => {
       <button onClick={handleStop}>Stop</button>
       <button onClick={resetTranscript}>Reset</button>
       <p>{transcript}</p>
-      {/* {audioUrl && (
-        <audio controls>
-          <source src={audioUrl} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      )} */}
       {audioUrl && 
         <div>
           <p>{context ? context.length : 0}</p>
