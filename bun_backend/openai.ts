@@ -13,7 +13,7 @@ const openai = new OpenAI();
 
 export const generateAnalyze = async (context: string[], text: string = "") => {
     const jsonExample = `
-    {
+    [
     "question_id": "<question_id>",
     "question": "<question>",
     "answer": "<answer>",
@@ -24,7 +24,7 @@ export const generateAnalyze = async (context: string[], text: string = "") => {
         "<suggestion_2>",
         "<suggestion_3>"
     ]
-    }
+    ]
     `;
 
     const hold = [{
@@ -43,6 +43,7 @@ export const generateAnalyze = async (context: string[], text: string = "") => {
         content: "Provide the feedback in this exact JSON format that follows this " + jsonExample,
     }] as ChatCompletionMessageParam[]
     console.log("before generateAnalyze", hold)
+    
     try {
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",

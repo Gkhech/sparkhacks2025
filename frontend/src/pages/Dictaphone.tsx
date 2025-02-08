@@ -4,7 +4,7 @@ import fish from '../assets/fish.png'
 import React, { useState, useEffect } from 'react';
 import "regenerator-runtime/runtime";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import type { MyRequest, MyResponse } from "../../../types/types";
+import type { AnalysisResponse, MyRequest, MyResponse } from "../../../types/types";
 import styles from '../styles/Dictaphone.module.css';
 
 interface SpeechRecognitionResult {
@@ -26,6 +26,8 @@ const Dictaphone: React.FC = () => {
   const [context, setContext] = useState<string[] | null>(null);
   const [seconds, setSeconds] = useState<number>(60); // Start from 60 seconds
   const [isActive, setIsActive] = useState<boolean>(false);
+  const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
+
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -99,8 +101,9 @@ const Dictaphone: React.FC = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
     
-      let data = await response.json();
-      console.log("Response:", data);
+      let data: AnalysisResponse = await response.json();
+      setAnalysis(data);
+      console.log("Response:", data.analysis.analysis);
     } catch (error) {
       console.error("Fetch error:", error);
     }
@@ -162,7 +165,32 @@ const Dictaphone: React.FC = () => {
   //     console.error("Error in handleStop:", error);
   //   }
   // };
-
+  const hold = analysis && analysis.analysis ? 
+  Object.values(analysis.analysis).map((element) => (
+    <div key={element.id}>
+      <h3>Question {element.id}</h3>
+      <p>{element.question}</p>
+      <p>Answer: {element.answer}</p>
+      <div>
+        <h4>Feedback:</h4>
+        <p>{element.feedback.general}</p>
+        {element.feedback.strengths !== "N/A" && (
+          <p>Strengths: {element.feedback.strengths}</p>
+        )}
+        <div>
+          <p>Suggestions:</p>
+          <ul>
+            {element.feedback.suggestions.map((suggestion, idx) => (
+              <li key={idx}>{suggestion}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  )) 
+  : null;
+  
+  
   return (
     <div className={styles.dictaphone}>
       <h1>Timer: {seconds}s</h1>
@@ -176,6 +204,8 @@ const Dictaphone: React.FC = () => {
       {audioUrl && <audio key={audioUrl} src={audioUrl} controls />}
       <button onClick={handleAnalyzes}>Submit for Analyzes</button>
       
+      {hold && hold}
+
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { createClient } from 'redis';
 import fs from "fs";
 import path from "path";
 import OpenAI from "openai";
+import { transformInterviewJson } from "./util/util";
 
 const app = express();
 const cors = require("cors")
@@ -74,8 +75,9 @@ app.get("/analyze", async (req: Request, res: Response) => {
   const replyJSON = reply.choices[0].message.content;
   // Send both the raw data and the organized conversation
   console.log(replyJSON)
+  const cleanedJSON = transformInterviewJson(replyJSON!)
   res.json({
-    analysis: replyJSON
+    analysis: cleanedJSON
   });
 });
 
