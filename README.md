@@ -26,6 +26,7 @@ Follow these steps to set up and start your AI-driven interview experience:
 Obtain required files
 Clone or download the GitHub repository and run the following commands to set up both the front-end and back-end:
 
+# Instructions
 ## 1. Clone the repository
 git clone https://github.com/Gkhech/sparkhacks2025.git
 
