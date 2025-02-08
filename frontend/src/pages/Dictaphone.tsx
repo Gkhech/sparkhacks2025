@@ -1,11 +1,12 @@
 "use client";
 
+import fish from '../assets/fish.png'
 import React, { useState, useEffect } from 'react';
 import "regenerator-runtime/runtime";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import type {MyRequest, MyResponse} from "../../../types/types";
+import type { MyRequest, MyResponse } from "../../../types/types";
+import styles from '../styles/Dictaphone.module.css';
 
-// Define interfaces for the component's props and recognition results
 interface SpeechRecognitionResult {
   transcript: string;
   listening: boolean;
@@ -23,23 +24,46 @@ const Dictaphone: React.FC = () => {
   const [isClient, setIsClient] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [context, setContext] = useState<string[] | null>(null);
+  const [seconds, setSeconds] = useState<number>(60); // Start from 60 seconds
+  const [isActive, setIsActive] = useState<boolean>(false);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (isActive && seconds > 0) {
+      intervalId = setInterval(() => {
+        setSeconds((prevSeconds) => {
+          const newSeconds = prevSeconds - 1;
+          if (newSeconds === 0) {
+            // When timer hits 0, stop everything
+            setIsActive(false);
+            handleStop();
+          }
+          return newSeconds;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isActive, seconds]);
 
 
 
   useEffect(() => {
-    // Set isClient to true when the component mounts on the client
     setIsClient(true);
   }, []);
 
   useEffect(() => {
-    // Cleanup function to revoke the previous audio URL when it changes
     return () => {
       if (audioUrl) {
-        console.log("in here")
-        URL.revokeObjectURL(audioUrl); // Revoke previous audio URL when it changes or component unmounts
+        URL.revokeObjectURL(audioUrl);
       }
     };
-  }, [audioUrl]); // Effect runs when audioUrl changes
+  }, [audioUrl]);
 
   const {
     transcript,
@@ -58,8 +82,9 @@ const Dictaphone: React.FC = () => {
     language: 'en-US'
   };
 
-  // Fix the onClick handlers to use proper function calls
   const handleStart = () => {
+    setSeconds(15); // Reset timer to 60 seconds
+    setIsActive(true);
     SpeechRecognition.startListening(options);
   };
 
@@ -80,9 +105,13 @@ const Dictaphone: React.FC = () => {
       console.error("Fetch error:", error);
     }
   }
+  
 
   const handleStop = async () => {
     try {
+      SpeechRecognition.stopListening();
+      setIsActive(false);
+      setSeconds(60); // Reset timer back to 60
 
       console.log("executing handleStop"); // Add this to check if function is called
       const current_id = context ? context.length : 0
@@ -108,10 +137,6 @@ const Dictaphone: React.FC = () => {
         console.log("Context", context)
       }
       
-      // const data: MyResponse = await response.json();
-      // Convert the buffer array to Uint8Array
-      const nextId = response.headers.get('X-Response-Id');
-    
       // Get the audio blob directly
       const audioBlob = await response.blob();
       const url = URL.createObjectURL(audioBlob);
@@ -120,27 +145,38 @@ const Dictaphone: React.FC = () => {
         URL.revokeObjectURL(audioUrl);
       }
 
-      SpeechRecognition.stopListening();
       setAudioUrl(url);
-      // Clean up previous URL when component unmounts
-    } catch (error) {
-      console.error("Error in handleStop:", error);
     }
-  };
+    catch(error){
+      console.log(error)
+    }
+  }
+  
+  //     // Clean up previous URL when component unmounts
+  // const handleStop = () => {
+  //   try {
+  //     SpeechRecognition.stopListening();
+  //     setIsActive(false);
+  //     setSeconds(60); // Reset timer back to 60
+  //   } catch (error) {
+  //     console.error("Error in handleStop:", error);
+  //   }
+  // };
 
   return (
-    <div>
-      <p>Microphone: {listening ? 'on' : 'off'}</p>
+    <div className={styles.dictaphone}>
+      <h1>Timer: {seconds}s</h1>
+      <img className={styles.fish} src={fish} />
+      <p className={styles.mic}>Microphone: {listening ? 'on' : 'off'}</p>
       <button onClick={handleStart}>Start</button>
       <button onClick={handleStop}>Stop</button>
       <button onClick={resetTranscript}>Reset</button>
+
+      <button onClick={handleAnalyzes}>Submit for Analyzes</button>
+
       <p>{transcript}</p>
-      {audioUrl && 
-        <div>
-          <p>{context ? context.length : 0}</p>
-          <audio key={audioUrl} src={audioUrl} controls />
-        </div>}
-      <button onClick={handleAnalyzes} ></button>
+      {audioUrl && <audio key={audioUrl} src={audioUrl} controls />}
+      <p>{audioUrl}</p>
     </div>
   );
 };
