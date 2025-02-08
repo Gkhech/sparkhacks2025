@@ -19,7 +19,7 @@ const Home = () => {
             </div>
           </section>
 
-          {/*<Dictaphone />*/}
+          <Dictaphone />
         </motion.div>
       </section>
 
