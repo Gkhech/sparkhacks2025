@@ -66,8 +66,10 @@ const Dictaphone: React.FC = () => {
 
   const handleStop = async () => {
     try {
-
       console.log("executing handleStop"); // Add this to check if function is called
+      options.continuous = false;
+
+      /*
       const current_id = context ? context.length : 0
 
       const myRequest: MyRequest = {
@@ -90,10 +92,6 @@ const Dictaphone: React.FC = () => {
         console.log("Context", context)
       }
 
-      // const data: MyResponse = await response.json();
-      // Convert the buffer array to Uint8Array
-      const nextId = response.headers.get('X-Response-Id');
-
       // Get the audio blob directly
       const audioBlob = await response.blob();
       const url = URL.createObjectURL(audioBlob);
@@ -104,17 +102,21 @@ const Dictaphone: React.FC = () => {
 
       setAudioUrl(url);
 
-      // Clean up previous URL when component unmounts
       SpeechRecognition.stopListening();
-    } catch (error) {
+    } 
+    */
+    }
+    catch (error) {
       console.error("Error in handleStop:", error);
     }
   };
 
+  console.log(options.continuous);
+
   return (
     <div className={styles.dictaphone}>
-      <img src={fish} className={styles.fish} />
-      <p>Microphone: {listening ? 'on' : 'off'}</p>
+      <img className={styles.fish} src={fish} />
+      <p className={styles.mic}>Microphone: {listening ? 'on' : 'off'}</p>
       <button onClick={handleStart}>Start</button>
       <button onClick={handleStop}>Stop</button>
       <button onClick={resetTranscript}>Reset</button>
