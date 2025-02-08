@@ -28,7 +28,6 @@ Clone or download the GitHub repository and run the following commands to set up
 
 ## 1. Clone the repository
 git clone https://github.com/Gkhech/sparkhacks2025.git
-gh repo clone Gkhech/sparkhacks2025
 
 ## 2. Navigate into the project folder
 cd sparkhacks2025
