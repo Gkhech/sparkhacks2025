@@ -11,16 +11,63 @@ const openai = new OpenAI();
 //   model: "whisper-1",
 // });
 
+export const generateAnalyze = async (context: string[], text: string = "") => {
+    const jsonExample = `
+    {
+    "question_id": "<question_id>",
+    "question": "<question>",
+    "answer": "<answer>",
+    "general_feedback": "<general_feedback>",
+    "strengths": "<strengths>",
+    "suggestions": [
+        "<suggestion_1>",
+        "<suggestion_2>",
+        "<suggestion_3>"
+    ]
+    }
+    `;
+
+    const hold = [{
+        role: "developer",
+        content: "You are an expert interview coach providing detailed and structured feedback on behavioral interview answers. Always break down responses and ensure constructive feedback that helps improve interview performance.",
+    },
+    ...context.map((context_text) => ({
+        role: "user",
+        content: context_text, // Changed `context` to `content`
+    })),{
+        role: "assistant",
+        content: "Please JUST provide feedback on the following behavioral interview transcript. Focus on the quality of the responses, the relevance to the questions, the candidate's communication style, and the depth of the answers. Include suggestions for improvement, such as areas where more detail could have been provided, examples that might strengthen the response, or improvements in how the candidate presents their experiences. If the answer is empty, or completely off-topic then acknowledge and criticize.",
+    }
+    ,{
+        role: "assistant",
+        content: "Provide the feedback in this exact JSON format that follows this " + jsonExample,
+    }] as ChatCompletionMessageParam[]
+    console.log("before generateAnalyze", hold)
+    try {
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: hold,
+            store: true,
+            temperature: 0.7,
+        });
+        return completion
+    } catch (error) {
+        console.error('Error creating speech:', error);
+        throw error;
+    }
+}
+
+
 export const generateReply = async (context: string[], text: string, id: number) => {
     //let hold: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
     //if( id == 0){
     const hold = [{
-        role: "user",
+        role: "developer",
         content: "You are an expert recruiter who specializes in behavioral interviewing. Provide thoughtful and insightful questions that test real-world soft skills and experiences relevant to the job.",
     },
     {
-        role: "user",
-        content: "Generate 8 behavioral interview questions (allocate 100 tokens per question) for a entry level software engineer in backend development. Focus on soft skills, challenges, and job requirements typically associated with this position. Make sure questions assess problem-solving, teamwork, leadership, and adaptability. The questions should be for entry level. Respond only with questions (EACH QUESTION SHOULD END WITH '@' ONLY )",
+        role: "developer",
+        content: "Generate 4 behavioral interview questions for a Senior Software Engineer. Focus on soft skills, challenges, and job requirements typically associated with this position. Make sure questions assess problem-solving, teamwork, leadership, adaptability, and other qualities. The questions should be Medium complexity. Respond only with questions. Each individual question should be followed by @ symbol with no space in-between. Example format you must follow Question 1@Question 2@Question 3@Question 4@...",
     },
     ...context.map((context_text) => ({
         role: "user",
@@ -33,15 +80,13 @@ export const generateReply = async (context: string[], text: string, id: number)
     //     hold = 
     // }
 
-
-
-
     console.log("hold", hold)
     try {
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: hold,
             store: true,
+            temperature: 0.7,
         });
         return completion
     } catch (error) {
@@ -84,7 +129,6 @@ export const createSpeechArray = async (textArray: string[], voice: Voice = 'all
 };
 
 export const createSpeech = async (text: string, voice: Voice = 'alloy') => {
-    exit(1);
     const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     });

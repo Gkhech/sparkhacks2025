@@ -1,5 +1,5 @@
 import express from "express";
-import {createSpeech, createSpeechArray, generateReply} from "./openai"
+import {createSpeech, createSpeechArray, generateAnalyze, generateReply} from "./openai"
 import type { Response, Request } from "express";
 import type {MyRequest, MyResponse} from "../types/types";
 import { createClient } from 'redis';
@@ -28,11 +28,59 @@ let hold = ""
 
 app.use(cors())
 app.use(express.json());  // for parsing application/json
-// app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
 
 app.get("/", async (req: Request, res: Response ) => {
   res.send(hold);
+});
+
+app.get("/analyze", async (req: Request, res: Response) => {
+  const transcript = await client.hGetAll("transcript");
+  const interview_questions = await client.hGetAll("interview_questions");
+  
+  // Convert the objects into arrays and sort them
+  const sortedTranscript = Object.entries(transcript)
+    .map(([key, value]) => ({
+      id: parseInt(key.split(':')[1]),
+      text: value
+    }))
+    .sort((a, b) => a.id - b.id);
+
+  const sortedQuestions = Object.entries(interview_questions)
+    .map(([key, value]) => ({
+      id: parseInt(key),
+      text: value
+    }))
+    .sort((a, b) => a.id - b.id);
+
+  // Create the interleaved conversation array
+  const conversation: string[] = [];
+  
+  // Get the number of questions (which determines conversation length)
+  const questionCount = sortedQuestions.length;
+  
+  for(let i = 0; i < questionCount; i++) {
+    // Add the interview question
+    conversation.push("Question: " + sortedQuestions[i].text);
+    if(i < sortedTranscript.length){
+      conversation.push("Answer: " + sortedTranscript[i].text)
+    }
+    else{
+      conversation.push("Answer: no answer provided")
+    }
+  }
+  console.log(conversation)
+
+  const reply = await generateAnalyze(conversation, "")
+  const replyJSON = reply.choices[0].message.content;
+  // Send both the raw data and the organized conversation
+  console.log(replyJSON)
+  res.json({
+    raw: {
+      transcript,
+      interview_questions
+    },
+    conversation: conversation
+  });
 });
 
 
@@ -55,8 +103,6 @@ app.post("/speech", async (req: Request, res: Response ) => {
     await client.hSet('interview_questions', `${i}`,  result[i])
   }
 
-  await client.hSet('transcript', `interviewer:${myRequest.id + 1}`,  replyJSON || "")
-
   //"interviewee", myRequest.text || ""
   let buffer;
 
@@ -69,10 +115,9 @@ app.post("/speech", async (req: Request, res: Response ) => {
     }
   }
   //await client.hGet('interview_questions', myRequest.id + 1)
-  await client.hSet('transcript', `interviewer:${myRequest.id + 1}`,  myRequest.text)
 
   try {
-    buffer = await fs.promises.readFile(`./speech${myRequest.id - 1}.mp3`); // Read file as buffer
+    buffer = await fs.promises.readFile(`./speech${myRequest.id}.mp3`); // Read file as buffer
 
     res.set({
       'Content-Type': 'audio/mpeg',
