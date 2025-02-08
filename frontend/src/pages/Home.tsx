@@ -29,9 +29,25 @@ const Home = () => {
           {/* Content to scroll to */}
           <div ref={scrollRef} className={styles.scrollTarget}>
             <div className={styles.section2}>
-              <h1>Number of Questions</h1>
-              <input type="text" />
+              <div>
+                <h1>Number of Questions</h1>
+                <input type="text" />
+              </div>
 
+              <div>
+                <h1>Job Title</h1>
+                <input type="text" />
+              </div>
+
+              <div>
+                <h1>Experience</h1>
+                <input type="text" />
+              </div>
+
+              <div>
+                <h1>Q Complexity</h1>
+                <input type="text" />
+              </div>
             </div>
           </div>
         </motion.div>

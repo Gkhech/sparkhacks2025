@@ -13,12 +13,13 @@
 
 .scrollTarget {
   display: flex;
-  margin-top: 32em;
+  margin-top: 64em;
   border-radius: 8px;
 }
 
 .section2 {
-  margin: 8em 0 0 0;
+  color: #66cccc;
+  margin: 6em 0 0 8em;
 }
 
 
