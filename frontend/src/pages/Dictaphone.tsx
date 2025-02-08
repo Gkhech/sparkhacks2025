@@ -1,9 +1,11 @@
 "use client";
 
+import fish from '../assets/fish.png'
 import React, { useState, useEffect } from 'react';
 import "regenerator-runtime/runtime";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import type { MyRequest, MyResponse } from "../../../../types/types";
+import styles from '../styles/Dictaphone.module.css';
 
 // Define interfaces for the component's props and recognition results
 interface SpeechRecognitionResult {
@@ -110,7 +112,8 @@ const Dictaphone: React.FC = () => {
   };
 
   return (
-    <div >
+    <div className={styles.dictaphone}>
+      <img src={fish} className={styles.fish} />
       <p>Microphone: {listening ? 'on' : 'off'}</p>
       <button onClick={handleStart}>Start</button>
       <button onClick={handleStop}>Stop</button>

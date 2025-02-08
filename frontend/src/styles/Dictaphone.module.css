@@ -1,0 +1,12 @@
+.dictaphone {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.fish {
+  border: green 4px solid;
+  width: 12em;
+  height: 8em;
+
+}
