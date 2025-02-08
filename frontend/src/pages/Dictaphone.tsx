@@ -77,7 +77,7 @@ const Dictaphone: React.FC = () => {
   }
 
   const options: ListeningOptions = {
-    continuous: false,
+    continuous: true,
     interimResults: true,
     language: 'en-US'
   };
@@ -169,14 +169,13 @@ const Dictaphone: React.FC = () => {
       <img className={styles.fish} src={fish} />
       <p className={styles.mic}>Microphone: {listening ? 'on' : 'off'}</p>
       <button onClick={handleStart}>Start</button>
-      <button onClick={handleStop}>Stop</button>
+      {/* <button onClick={handleStop}>Stop</button> */}
       <button onClick={resetTranscript}>Reset</button>
-
-      <button onClick={handleAnalyzes}>Submit for Analyzes</button>
-
+      <button onClick={handleStop}>Submit Answer</button>
       <p>{transcript}</p>
       {audioUrl && <audio key={audioUrl} src={audioUrl} controls />}
-      <p>{audioUrl}</p>
+      <button onClick={handleAnalyzes}>Submit for Analyzes</button>
+      
     </div>
   );
 };

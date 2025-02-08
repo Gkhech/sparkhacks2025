@@ -75,11 +75,7 @@ app.get("/analyze", async (req: Request, res: Response) => {
   // Send both the raw data and the organized conversation
   console.log(replyJSON)
   res.json({
-    raw: {
-      transcript,
-      interview_questions
-    },
-    conversation: conversation
+    analysis: replyJSON
   });
 });
 
