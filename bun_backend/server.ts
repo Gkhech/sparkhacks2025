@@ -3,11 +3,12 @@ import {createSpeech, createSpeechArray, generateAnalyze, generateReply} from ".
 import type { Response, Request } from "express";
 import type {MyRequest, MyResponse} from "../types/types";
 import { createClient } from 'redis';
-
+import dotenv from 'dotenv'; 
 import fs from "fs";
 import path from "path";
 import OpenAI from "openai";
 import { transformInterviewJson } from "./util/util";
+dotenv.config();//load env var
 
 const app = express();
 const cors = require("cors")
@@ -15,10 +16,8 @@ const port = 8080;
 const speechFile = path.resolve("./speech.mp3");
 
 const client = createClient({
-  url: 'redis://default:1N9uY3ryAN5asnc061z7fjvTglqGCEyv@redis-13838.c263.us-east-1-2.ec2.redns.redis-cloud.com:13838'
+  url: process.env.REDIS_API_URL
 });
-//redis-13838.c263.us-east-1-2.ec2.redns.redis-cloud.com:13838
-//redis[s]://[[username][:password]@][host][:port][/db-number]:
 
 client.on('error', err => console.log('Redis Client Error', err));
 
