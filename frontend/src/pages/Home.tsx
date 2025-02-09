@@ -34,29 +34,42 @@ const Home = () => {
 
         {/* Content to scroll to */}
         <div ref={scrollRef} className={styles.scrollTarget}>
-          <h1 className={styles.metadata}>Meta Data Before Starting</h1>
+          <h1 className={styles.metadata}>Interview Options</h1>
           <div className={styles.section2}>
-            <br />
-            <div className={styles.combo}>
-              <h1># of Questions:</h1>
-              <input type="text" />
-            </div>
             <br />
             <div className={styles.combo}>
               <h1>Job Title:</h1>
               <input type="text" />
             </div>
-
             <br />
             <div className={styles.combo}>
               <h1>Experience:</h1>
-              <input type="text" />
+              <select>
+                <option value="Entry-level">Entry-level</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Mid-level">Mid-level</option>
+                <option value="Senior">Senior</option>
+              </select>
             </div>
-
             <br />
             <div className={styles.combo}>
-              <h1>Q Complexity:</h1>
-              <input type="text" />
+              <h1># of Questions:</h1>
+              <select>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+            <br />
+            <div className={styles.combo}>
+              <h1>Complexity:</h1>
+              <select>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
             </div>
           </div>
           <button className={styles.submit_meta} onClick={handleSubmit} >Submit</button>
