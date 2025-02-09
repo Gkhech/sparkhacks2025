@@ -85,7 +85,7 @@ const Dictaphone: React.FC = () => {
   };
 
   const handleStart = () => {
-    setSeconds(15); // Reset timer to 60 seconds
+    setSeconds(60); // Reset timer to 60 seconds
     setIsActive(true);
     SpeechRecognition.startListening(options);
   };
@@ -167,8 +167,9 @@ const Dictaphone: React.FC = () => {
   // };
   const hold = analysis && analysis.analysis ? 
   Object.values(analysis.analysis).map((element) => (
-    <div key={element.id}>
-      <h3>Question {element.id}</h3>
+    <div className={styles.box} key={element.id}>
+      <div className={styles.item}>
+      <h3 className={styles.spacing}>Question {element.id}</h3>
       <p>{element.question}</p>
       <p>Answer: {element.answer}</p>
       <div>
@@ -186,25 +187,28 @@ const Dictaphone: React.FC = () => {
           </ul>
         </div>
       </div>
+      </div>
     </div>
   )) 
   : null;
-  
-  
+
   return (
     <div className={styles.dictaphone}>
-      <h1>Timer: {seconds}s</h1>
       <img className={styles.fish} src={fish} />
-      <p className={styles.mic}>Microphone: {listening ? 'on' : 'off'}</p>
-      <button onClick={handleStart}>Start</button>
-      {/* <button onClick={handleStop}>Stop</button> */}
-      <button onClick={resetTranscript}>Reset</button>
-      <button onClick={handleStop}>Submit Answer</button>
-      <p>{transcript}</p>
+      <h1 className={styles.timer}>Timer: {seconds}s</h1>
+      <h1 className={styles.mic}>Microphone: {listening ? 'On' : 'Off'}</h1>
+      <div className={styles.button_container}>
+        <button className={styles.options_buttons} onClick={handleStart}>Start</button>
+        {/* <button onClick={handleStop}>Stop</button> */}
+        <button className={styles.options_buttons} onClick={resetTranscript}>Reset</button>
+        <button className={styles.options_buttons} onClick={handleStop}>Submit Answer</button>
+        <button className={styles.options_buttons} onClick={handleAnalyzes}>Submit for Analyzes</button>
+      </div>
+      <p className={styles.transcript} >{transcript}</p>
       {audioUrl && <audio key={audioUrl} src={audioUrl} controls />}
-      <button onClick={handleAnalyzes}>Submit for Analyzes</button>
-      
+      <div className={styles.outerBox}>
       {hold && hold}
+      </div>
 
     </div>
   );

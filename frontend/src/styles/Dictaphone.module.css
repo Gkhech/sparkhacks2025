@@ -11,12 +11,64 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: green 4px solid;
   width: 14em;
   height: 10em;
+
+}
+
+.timer {
+  margin: 1em 0 0 0;
+  color: red;
+
 }
 
 .mic {
+  margin: 0.8em 0 0 0;
+  font-size: 1.2rem;
   color: #66cccc;
+}
 
+.transcript {
+  width: 32em;
+  height: 8em;
+  color: #66cccc;
+}
+
+.button_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  padding: 1em;
+}
+
+.options_buttons {
+  margin: 0.5em 0 0 0;
+  background-color: #66cccc;
+  color: white;
+  width: 12em;
+  height: 3em;
+  border: none;
+  border-radius: 0.5em;
+}
+
+.box {
+  background-color: #66cccc;
+  color: white;
+  width: 15em;
+  height: 10em;
+  overflow: scroll;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.spacing {
+  margin: 5em 0 0 0;
+}
+
+.outerBox{
+  margin-top: 2em;
+  flex-direction: row;
+  display: flex;
 }

@@ -76,6 +76,7 @@ app.get("/analyze", async (req: Request, res: Response) => {
   // Send both the raw data and the organized conversation
   console.log(replyJSON)
   const cleanedJSON = transformInterviewJson(replyJSON!)
+  await client.del("transcript");
   res.json({
     analysis: cleanedJSON
   });
