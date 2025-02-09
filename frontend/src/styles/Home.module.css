@@ -30,9 +30,20 @@
   margin: 0 0 0 24em;
   display: flex;
   flex-direction: column;
-  align-items: left;
   gap: 1.5em;
   color: #66cccc;
+}
+
+.section2 select,
+.section2 input[type="text"] {
+  width: 20em;
+  height: 2.5em;
+  border-radius: 0.5em;
+  padding: 0 1em;
+  border: none;
+  background-color: #ffffff;
+  font-size: 1rem;
+  box-sizing: border-box; 
 }
 
 .combo {
@@ -84,7 +95,7 @@
   height: 100%;
   width: 100%;
   text-align: center;
-  color: #66cccc;
+  color: #488e8e;
   margin: 14em 0 0 0;
 }
 
@@ -106,7 +117,7 @@
   margin: 1em 0 0 0;
   width: 4em;
   height: 2em;
-  background-color: #66cccc;
+  background-color: #488e8e;
   border-radius: 2em;
   border: none;
   color: white;
