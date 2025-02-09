@@ -1,6 +1,9 @@
 # InterviewDivers
 
-InterviewDivers is an AI-powered interview coach designed to help users practice and improve their interview skills. It provides interactive sessions by asking questions via text-to-speech and accepting user responses through speech-to-text. After all questions are answered, the app offers feedback on the user's responses.
+InterviewDivers is an AI-powered interview coach designed to help users practice and improve their interview skills. It provides interactive sessions by asking questions via text-to-speech and accepting user responses through speech-to-text. After all questions are answered, the app offers feedback on the user's responses. We came up with this idea because we wanted to get better at behavioral interviews.
+
+## Divers Team
+Gor Khechyan, Jin Lee, Michael Rosas, Jill Ujalia
 
 ## Features
 
